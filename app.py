@@ -11,8 +11,6 @@ class App():
         self.__gui = GUI(self)
         self.folder_1 = None
         self.folder_2 = None
-        self.hashlist_1 = []
-        self.hashlist_2 = []
         self.__gui.mainloop()
 
     @property
@@ -32,47 +30,35 @@ class App():
         self.__folder_2 = value
     
     def find(self, folder_1, folder_2=None):
-        if self.folder_1 and self.folder_2:
-            self.all_files1 = self.all_files(self.folder_1)
-            self.all_files2 = self.all_files(self.folder_2)
-            hashlist = list(map(lambda x: x.hash, self.all_files1))
+        if folder_1 and folder_2:
+            folder1_files = Folder(folder_1).GetFiles()
+            folder2_files = Folder(folder_2).GetFiles()
+            set1 = set(map(lambda x: x.hash, folder1_files))
+            set2 = set(map(lambda x: x.hash, folder2_files))
             files = []
-            for i, file in enumerate(self.all_files2):
-                count = hashlist.count(file.hash)
-                if count != 0: files.append(file)
+            for i, file in enumerate(folder2_files):
+                if file.hash in set1.intersection(set2): files.append(file)
             self.remove_files(files)
-        elif self.folder_1:
-            files = self.find_duplicates_files(self.folder_1)
+        elif folder_1:
+            files = self.find_duplicates_files(folder_1)
             self.remove_files(files)
 
-    def find_duplicates_files(self, folder):
-        folder = Folder(folder, "**", "*.*")
+    def find_duplicates_files(self, folder_path):
+        folder = Folder(folder_path)
         hashlist = []
         duplicates = []
-        for path_file in folder.GetFiles():
-            file = File(path_file)
+        for file in folder.GetFiles():
             count = hashlist.count(file.hash)
             if count == 0: hashlist.append(file.hash)
             else: duplicates.append(file)
         return duplicates
     
     def remove_files(self, files):
-        for file in files:
-            os.remove(file.path)
-
-    def all_files(self, folder):
-        path_folder = pathlib.Path(folder, "**", "*.*")
-        path_files = glob.glob(str(path_folder), recursive=True)
-        files = []
-        for path_file in path_files:
-            file = File(path_file)
-            files.append(file)
-        return files
+        map(lambda x: os.remove(x.path), files)
 
 
     
     
-app = App()          
 #app.folder_1 = "E:\\Nova pasta\\musicas"              
 #app.folder_2 = "E:\\Nova pasta\\jpg\\jpg - Copia"
 #app.folder_1 = "C:\\Users\\sonia\\Desktop\\Nova pasta - Copia"             

@@ -16,4 +16,4 @@ class GUI(Tk):
     
     def bt_search_click(self, event):
         print("OK")
-GUI()
+#GUI()
