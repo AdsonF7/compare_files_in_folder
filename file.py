@@ -1,6 +1,7 @@
 import pathlib
 import hashlib
 import pathlib
+from os.path import isfile
 
 class File():
 
@@ -22,9 +23,12 @@ class File():
     @path.setter
     def path(self, value):
         self.__path = pathlib.Path(value)
-        self.__name = self.__path.stem
-        self.__hash = File.checksum_md5(self.__path)
-        
+        if self.__path.is_absolute() and isfile(self.__path):
+            self.__name = self.__path.stem
+            self.__hash = File.checksum_md5(self.__path)
+        else:
+            raise "The path not is valid"
+    
     @staticmethod
     def cheksum_md5(file):
         data = ""
@@ -34,5 +38,4 @@ class File():
                 file_hash.update(chunk)
                 chunk = file_to_check.read(8192)
             file_to_check.close()
-        #print(file_hash.hexdigest())
         return file_hash.hexdigest()

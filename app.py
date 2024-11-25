@@ -14,7 +14,7 @@ class App():
         self.hashlist_1 = []
         self.hashlist_2 = []
         self.__gui.mainloop()
-        
+
     @property
     def folder_1(self):
         return self.__folder_1
@@ -31,7 +31,7 @@ class App():
     def folder_2(self, value):
         self.__folder_2 = value
     
-    def find(self):
+    def find(self, folder_1, folder_2=None):
         if self.folder_1 and self.folder_2:
             self.all_files1 = self.all_files(self.folder_1)
             self.all_files2 = self.all_files(self.folder_2)
@@ -46,11 +46,10 @@ class App():
             self.remove_files(files)
 
     def find_duplicates_files(self, folder):
-        path_folder = pathlib.Path(folder, "**", "*.*")
-        path_files = glob.glob(str(path_folder), recursive=True)
+        folder = Folder(folder, "**", "*.*")
         hashlist = []
         duplicates = []
-        for path_file in path_files:
+        for path_file in folder.GetFiles():
             file = File(path_file)
             count = hashlist.count(file.hash)
             if count == 0: hashlist.append(file.hash)
