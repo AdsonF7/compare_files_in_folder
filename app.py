@@ -12,8 +12,6 @@ class App():
         self._gui.mainloop()
 
     def find(self, folder_1, folder_2=None, erase=False):
-        if erase:
-            print(erase)
         if (folder_1 and folder_2):
             try:
                 folder1_files = Folder(folder_1).files
@@ -25,7 +23,6 @@ class App():
             if len(copies) > 0:
                 files = list(filter(lambda x: x.hash in copies, folder2_files))
         elif folder_1:
-            print("ok 1")
             files = self.find_duplicates_files(folder_1)
         if len(files) > 0:
             if erase: self.remove_files(files)
@@ -44,7 +41,8 @@ class App():
         return duplicates
     
     def remove_files(self, files):
-        print(files[0].path)
+        for file in files:
+            print(file.path)
         [os.remove(i.path) for i in files]
 
     def valid_paths(self, path_list):
